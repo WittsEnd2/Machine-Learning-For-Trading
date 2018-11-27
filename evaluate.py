@@ -1,5 +1,5 @@
-import keras
-from keras.models import load_model
+import tensorflow.keras as keras
+from tensorflow.keras.models import load_model
 
 from agent.agent import Agent
 from functions import *

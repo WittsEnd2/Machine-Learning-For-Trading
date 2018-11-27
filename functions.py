@@ -1,4 +1,7 @@
 import numpy as np
+import pandas_datareader as pdr
+import pandas_datareader.data as web
+from datetime import datetime, timedelta
 import math
 
 # prints formatted price
@@ -12,9 +15,18 @@ def getStockDataVec(key):
 
 	for line in lines[1:]:
 		vec.append(float(line.split(",")[4]))
-
 	return vec
 
+def getStockDataPdr(stockTicker, hm_days): 
+	vec = []
+	start = datetime.now() - timedelta(days=hm_days)
+	end = datetime.now()
+	f = web.DataReader(stockTicker, 'iex', start, end)
+	
+	for index, value in f.iterrows():
+		vec.append(value.close)
+	return vec
+	
 # returns the sigmoid
 def sigmoid(x):
 	return 1 / (1 + math.exp(-x))
