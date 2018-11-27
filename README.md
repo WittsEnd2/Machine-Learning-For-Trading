@@ -1,6 +1,6 @@
 ## Overview
 
-This is the code for [this](https://www.youtube.com/watch?v=05NqKJ0v7EE) video on Youtube by Siraj Raval. The author of this code is [edwardhdlu](https://github.com/edwardhdlu/q-trader) . It's implementation of Q-learning applied to (short-term) stock trading. The model uses n-day windows of closing prices to determine if the best action to take at a given time is to buy, sell or sit.
+This is a modification of the code found in this [video](https://www.youtube.com/watch?v=05NqKJ0v7EE) on Youtube by Siraj Raval. The author of this code is [edwardhdlu](https://github.com/edwardhdlu/q-trader) and is modified by [mwittner](https://github.com/mwittner2). It's implementation of Q-learning applied to (short-term) stock trading. The model uses n-day windows of closing prices to determine if the best action to take at a given time is to buy, sell or sit. It is currently being modified to represent a portfolio rather than an individual stock, and is also taking into account news, tweets, and other external factors that may or may not affect the stock. 
 
 As a result of the short-term state representation, the model is not very good at making decisions over long-term trends, but is quite good at predicting peaks and troughs.
 
