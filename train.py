@@ -2,14 +2,17 @@ from agent.agent import Agent
 from functions import *
 import sys
 
+
 if len(sys.argv) != 4:
 	print("Usage: python train.py [stock] [window] [episodes]")
 	exit()
 
+
 stock_name, window_size, episode_count = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
 
+
 agent = Agent(window_size)
-data = getStockDataPdr(stock_name, 365)
+data = getStockDataPdr(stock_name, 253)
 l = len(data) - 1
 batch_size = 32
 

@@ -1,5 +1,5 @@
 import nltk
-import nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import json
 
 def getSentiment(tweet):

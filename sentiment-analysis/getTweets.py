@@ -22,9 +22,9 @@ consumer_secret = "2AKsg0BwxI1bDErlQDUgmNVDvOwzx98htaiYKGXeZzoHv71Jy6"
 
 access_token = "839692039-VulkCGE4QZRZlKYQtDuNjRWgJnxsCdeSfqaPuObs"
 access_token_secret = "08AltS6hMTj5Y7sDh2cSLZCrtuqfEYQJ5LTqEI2N4FLN0"
-company = "JetBlue"
+company = "Microsoft"
 ticker_symbol = "JetBlue"
-companyTweets = open(company+"Data.csv", "a")
+# companyTweets = open(company+"Data.csv", "a")
 
 totalSentiment = 0
 
@@ -59,7 +59,6 @@ class listener(StreamListener):
 		tweet = tweet.replace(",", "")
 		print(tweet)
 		sentimentNum = nlp.getSentiment(tweet)
-		totalSentiment += sentimentNum
 		sentiment = 0
 		if (sentimentNum > 0.8):
 			sentiment = 1
@@ -67,9 +66,9 @@ class listener(StreamListener):
 			sentiment = -1
 		else:
 			sentiment = 0
-
-		companyTweets.write(str(datetime.datetime.now()) + ', ' + tweet + ', ' + str(sentiment) + '\n')
-		companyTweets.flush()
+		print(sentimentNum)
+		# companyTweets.write(str(datetime.datetime.now()) + ', ' + tweet + ', ' + str(sentiment) + '\n')
+		# companyTweets.flush()
 	# 		tweetLower = tweet.lower()
 	# 		if(company in tweetLower or ticker_symbol in tweetLower):
 	# 			companyTweets.write('{"tweet": "' + tweet +'", "coordinates": ' + str(loc) + '}\n')
@@ -84,5 +83,5 @@ api = tweepy.API(auth)
 
 myStreamListener = listener()
 myStream = Stream(auth = api.auth, listener=myStreamListener)
-myStream.filter(languages=["en"], track=["JetBlue"])
+myStream.filter(languages=["en"], track=["Microsoft"])
 
