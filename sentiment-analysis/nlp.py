@@ -1,6 +1,9 @@
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import json
+from nltk.corpus import reuters
+
+
 
 def getSentiment(tweet):
     sid = SentimentIntensityAnalyzer()
@@ -18,3 +21,19 @@ def getSentiment(tweet):
         sent = float(sent / count)
         
     return sent
+
+def trainOnReuters(): 
+    train_feats = []
+    test_feats = []
+	
+    for fileid in reuters.fileids():
+        if fileid.startswith('training'):
+            featlist = train_feats
+        else: # fileid.startswith('test')
+            featlist = test_feats
+		
+        feats = feature_detector(reuters.words(fileid))
+        labels = reuters.categories(fileid)
+        featlist.append((feats, labels))
+	
+    return train_feats, test_feats 
