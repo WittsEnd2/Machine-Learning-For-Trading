@@ -10,9 +10,9 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import os
 
 companyTweets = open("companyTweets.txt", "a")
-
 
     
 def preprocessing(text, labels):

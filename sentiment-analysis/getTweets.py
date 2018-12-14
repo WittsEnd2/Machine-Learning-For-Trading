@@ -24,7 +24,7 @@ access_token = "839692039-VulkCGE4QZRZlKYQtDuNjRWgJnxsCdeSfqaPuObs"
 access_token_secret = "08AltS6hMTj5Y7sDh2cSLZCrtuqfEYQJ5LTqEI2N4FLN0"
 company = "Microsoft"
 ticker_symbol = "JetBlue"
-companyTweets = open("companyData.csv", "a")
+companyTweets = open("trainData.csv", "a")
 
 totalSentiment = 0
 
@@ -79,5 +79,5 @@ api = tweepy.API(auth)
 
 myStreamListener = listener()
 myStream = Stream(auth = api.auth, listener=myStreamListener)
-myStream.filter(languages=["en"], track=["Microsoft", "Google", "Facebook", "Dow Jones"])
+myStream.filter(languages=["en"], track=["Microsoft", "Google", "Dow Jones", "NASDAQ", "Johnson & Johnson"])
 
