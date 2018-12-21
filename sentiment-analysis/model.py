@@ -1,61 +1,84 @@
 import tensorflow as tf
+from tensorflow import keras
+
 import numpy as np
 import pandas as pd
 
+# import nltk
+# from nltk.corpus import stopwords
+
+# from nltk.corpus import stopwords
+from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer
+
+from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.layers import Embedding
 from tensorflow.keras.layers import Input
 from tensorflow.keras.layers import Conv1D
-from tensorflow.keras.layers import MaxPooling1D
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import MaxPooling1D, GlobalMaxPool1D
+from tensorflow.keras.layers import Dense, Activation
 from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dropout, LSTM
 from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras import metrics, optimizers
 import os
 
-companyTweets = open("companyTweets.txt", "a")
+companyTweets = pd.read_csv("trainData.csv")
 
+max_length = 100
+
+word_index = None
+
+vocab_size = -1
+
+def getText(filename):
+    df = pd.read_csv(filename)
+    return df
+
+def preprocessing(df):
+    tokenizer = Tokenizer(num_words=5000)
+    description = df['Description'].values
+    sentiment = df['Sentiment'].values
+    print(sentiment)
+    tokenizer.fit_on_texts(description)
+    sequences = tokenizer.texts_to_sequences(description)
+    mat_texts = pad_sequences(sequences, maxlen=255)
+
+    multilabel_binarizer = LabelBinarizer()
+    tags = multilabel_binarizer.fit_transform(sentiment)
+    print(tags)
+    return mat_texts, tags
+
+def preprocess_prediction(text):
+    tokenizer = Tokenizer(num_words=5000)
+    tokenizer.fit_on_texts(text)
+    sequences = tokenizer.texts_to_sequences(text)
+    return pad_sequences(sequences, maxlen=255)
     
-def preprocessing(text, labels):
-    tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
-    tokenizer.fit_on_texts(texts) 
-    sequences = tokenizer.texts_to_sequences(texts)
-
-    word_index = tokenizer.word_index(texts)
-    
-    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-
-    labels = to_categorical(np.asarray(labels))
-
-    indicies = np.arange(data.shape[0])
-
-    np.random.shuffle(indicies)
-
-    data = data[indicies]
-    labels = labels[indicies]
-
-    nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
-
-    x_train = data[:-nb_validation_samples]
-    y_train = labels[:-nb_validation_samples]
-    x_val = data[-nb_validation_samples:]
-    y_val = data[-nb_validation_samples:]
-
-def embedding_layer():
-    return None
 def _model():
-    sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
-    embedded_sequences = embedding_layer(sequence_input)
-    x = Conv1D(128, 5, activation='relu')(embedded_sequences)
-    x = MaxPooling1D(5)(x)
-    x = Conv1D(128, 5, activation='relu')(x)
-    x = MaxPooling1D(5)(x)
-    x = Conv1D(128, 5, activation='relu')(x)
-    x = MaxPooling1D(35)(x)  # global max pooling
-    x = Flatten()(x)
-    x = Dense(128, activation='relu')(x)
-    preds = Dense(len(labels_index), activation='softmax')(x)
+    model=Sequential()
+    model.add(Embedding(5000, 20, input_length=255))
+    model.add(Dropout(0.1))
+    model.add(Conv1D(300, 3, padding='valid', activation='relu', strides=1))
+    model.add(GlobalMaxPool1D())
+    model.add(Dense(3))
+    model.add(Activation('sigmoid'))
+    model.summary()
+    adam = optimizers.Adam()
+    model.compile(loss='binary_crossentropy',
+                  optimizer=adam,
+                  metrics=['acc'])
 
-    model = Model(sequence_input, preds)
-    model.compile(loss='categorical_crossentropy',
-                optimizer='rmsprop',
-                metrics=['acc'])
+    return model
+
+def shuffle(df):
+    return df.reindex(np.random.permutation(df.index))
+df = getText("trainData.csv")
+df = shuffle(df)
+x_train, y_train = preprocessing(df)
+newModel = _model()
+newModel.fit(x=x_train, y = y_train, epochs = 10, batch_size=32, validation_split=0.2, shuffle=True)
+
+predictions = preprocess_prediction(np.array(["THIS IS AMAZING AND SOOOO GOOD!"]))
+print(newModel.predict(predictions))

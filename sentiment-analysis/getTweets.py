@@ -7,6 +7,7 @@ import unicodedata
 import json
 import datetime
 import nlp
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 '''
 - What to do next
@@ -26,6 +27,8 @@ company = "Microsoft"
 ticker_symbol = "JetBlue"
 companyTweets = open("trainData.csv", "a")
 
+sid = SentimentIntensityAnalyzer()
+
 totalSentiment = 0
 
 class listener(StreamListener):
@@ -43,7 +46,7 @@ class listener(StreamListener):
 		decoded = json.loads(str(data))
 		# if 'place' in decoded and decoded['place'] is not None:
 			# loc = decoded['place']['bounding_box']['coordinates'][0][0]
-			
+		# tweet = str(decoded['text'])	
 		tweet = str(emoji.demojize(decoded['text']).encode("unicode_escape"))
 		tweet = tweet[1:]
 		tweet = tweet.strip("\n")
@@ -58,15 +61,17 @@ class listener(StreamListener):
 		tweet = tweet.replace ("\\,", "")
 		tweet = tweet.replace(",", "")
 		print(tweet)
-		sentimentNum = nlp.getSentiment(tweet)
+		# sentimentNum = nlp.getSentiment(tweet)
+		ss = sid.polarity_scores(tweet)
+		sentimentNum = ss['compound']
 		sentiment = 0
-		if (sentimentNum > 0.8):
-			sentiment = 1
-		elif (sentimentNum < -0.8):
-			sentiment = -1
+		if (sentimentNum > 0.1):
+			sentiment = "Buy"
+		elif (sentimentNum < -0.1):
+			sentiment = "Sell"
 		else:
-			sentiment = 0
-		companyTweets.write(str(datetime.datetime.now()) + ', ' + tweet + ', ' + str(sentimentNum) + '\n')
+			sentiment = "Hold"
+		companyTweets.write(str(datetime.datetime.now()) + ',' + tweet + ',' + str(sentimentNum) + ',' + str(sentiment) + '\n')
 		companyTweets.flush()
 		tweetLower = tweet.lower()
 	def on_error(self, status):

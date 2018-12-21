@@ -19,5 +19,4 @@ def getSentiment(tweet):
 
     if count != 0:
         sent = float(sent / count)
-        t
     return sent
