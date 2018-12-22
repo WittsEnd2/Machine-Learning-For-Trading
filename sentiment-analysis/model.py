@@ -80,5 +80,5 @@ x_train, y_train = preprocessing(df)
 newModel = _model()
 newModel.fit(x=x_train, y = y_train, epochs = 10, batch_size=32, validation_split=0.2, shuffle=True)
 
-predictions = preprocess_prediction(np.array(["THIS IS AMAZING AND SOOOO GOOD!"]))
+predictions = preprocess_prediction(np.array(["Let's support our boys at google today"]))
 print(newModel.predict(predictions))

@@ -51,7 +51,6 @@ class listener(StreamListener):
 		tweet = tweet[1:]
 		tweet = tweet.strip("\n")
 		tweet = tweet.strip("\.")
-
 		tweet = tweet.replace("\n",". ")
 		tweet = tweet.replace("\\'","'")
 		tweet = tweet.replace("\\","")

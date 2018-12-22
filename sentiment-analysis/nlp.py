@@ -2,8 +2,17 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import json
 from nltk.corpus import reuters
+import requests
 
-
+def getReuters():
+    return None
+    
+def getNyTimes():
+    r = requests.get("https://api.nytimes.com/svc/search/v2/articlesearch.json?", headers = {"api-key": "7ec31869fad04e73af7e860c82d51042", "q": "Microsoft"})
+    dictionary = r.json()
+    counter = 0
+    print(dictionary)
+    
 
 def getSentiment(tweet):
     sid = SentimentIntensityAnalyzer()
