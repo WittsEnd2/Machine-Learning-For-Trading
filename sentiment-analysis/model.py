@@ -9,7 +9,7 @@ import warnings
 # from nltk.corpus import stopwords
 
 # from nltk.corpus import stopwords
-from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer
+from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
 # from sklearn.feature_extraction.text import TfidfVectorizer
 # from nltk import word_tokenize
 # from nltk.stem.porter import PorterStemmer
@@ -84,12 +84,14 @@ vocab_size = -1
 #     return df
 
 def preprocessing(text, labels):
-    tokenizer = Tokenizer()
+    max_words = 5000
+    tokenizer = Tokenizer(num_words=max_words)
     tokenizer.fit_on_texts(text)
     sequences = tokenizer.texts_to_sequences(text)
-    mat_texts = pad_sequences(sequences, maxlen=50)
-    multilabel_binarizer = LabelBinarizer()
-    tags = multilabel_binarizer.fit_transform(labels)
+    mat_texts = pad_sequences(sequences, maxlen=255)
+    # multilabel_binarizer = LabelEncoder()
+    # tags = multilabel_binarizer.fit_transform(labels)
+    tags = tf.keras.utils.to_categorical(labels, 3)
     print(tags)
     return mat_texts, tags
 
@@ -99,7 +101,7 @@ def preprocess_prediction(text):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(text)
     sequences = tokenizer.texts_to_sequences(text)
-    return pad_sequences(sequences, maxlen=50)
+    return pad_sequences(sequences, maxlen=255)
 
 # def preprocessReutersKeras(text):
 #     word_index = reuters.get_word_index()
@@ -114,10 +116,13 @@ def preprocess_prediction(text):
 #     return results
 def _model():
     model=Sequential()
-    model.add(Embedding(200, 20, input_length=50))
+    model.add(Embedding(5000, 20, input_length=255))
     model.add(Dropout(0.1))
-    model.add(Conv1D(200, 3, padding='valid', activation='relu', strides=1))
+    model.add(Conv1D(64, 3, padding='valid', activation='relu', strides=1))
     model.add(GlobalMaxPool1D())
+    model.add(Dense(256))
+    model.add(Dropout(0.1))
+    model.add(Activation('relu'))
     model.add(Dense(3))
     model.add(Activation('sigmoid'))
     model.summary()
@@ -132,15 +137,15 @@ def shuffle(df):
     return df.reindex(np.random.permutation(df.index))
 
 # text, labels = nlp.getReuters()
-df = pd.read_csv("headlines.csv", encoding="latin1")
-df['Headline'] = df['Headline'].astype(str)
-df['Sentiment'] = df['Sentiment'].astype(str)
-headlines = df['Headline'].values
+df = pd.read_csv("trainData.csv", encoding="latin1")
+
+headlines = df['Description'].values
 sentiments = df['Sentiment'].values
 x_train, y_train = preprocessing(headlines, sentiments)
 newModel = _model()
-newModel.fit(x=x_train, y = y_train, epochs = 10, batch_size=8, validation_split=0.2, shuffle=True)
-prediction = ["I think this is a strong buy"]
+
+newModel.fit(x=x_train, y = y_train, epochs = 3, batch_size=8, validation_split=0.2, shuffle=True)
+prediction = ["google got Macaulay Culkin for their home alone inspired ad.. this is the best way to end 2018"]
 prediction = preprocess_prediction(prediction)
 predictions = newModel.predict(prediction)
 
