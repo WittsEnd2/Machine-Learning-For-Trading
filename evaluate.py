@@ -14,7 +14,7 @@ model = load_model("models/" + model_name)
 window_size = model.layers[0].input.shape.as_list()[1]
 
 agent = Agent(window_size, True, model_name)
-data = getStockDataVec(stock_name)
+data = getStockDataPdr(stock_name, 253)
 l = len(data) - 1
 batch_size = 32
 

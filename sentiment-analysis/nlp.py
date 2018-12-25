@@ -74,27 +74,6 @@ def execute(company):
         time.sleep(1)
         getNyTimesSentiment(getNyTimes(company, i))
 
-# t1 = threading.Thread(target=execute, args = ("Microsoft",))
-# t2 = threading.Thread(target=execute, args = ("Google",))
-# t3 = threading.Thread(target=execute, args= ("Nvidia",))
-# t4 = threading.Thread(target=execute, args=("Intel",))
-# t5 = threading.Thread(target=execute, args=("Apple",))
-# t6 = threading.Thread(target=execute, args=("Facebook",))
-
-# t1.start()
-# t2.start()
-# t3.start()
-# t4.start()
-# t5.start()
-# t6.start()
-# t1.join()
-# t2.join()
-# t3.join()
-# t4.join()
-# t5.join()
-# t6.join()
-
-
 
 for i in range(0, 20):
     time.sleep(1)
